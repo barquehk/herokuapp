@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "express": "^4.0.0",
-    "pg": "^3.4.1"
+    "pg": "^3.4.1",
+    "request": "^2.40.0",
+    "through": "^2.3.4"
   },
   "engines": {
     "node": "0.10.x"

@@ -17,6 +17,9 @@ app.get('/', function(request, response) {
         console.log('this is a log from my app');
         response.write('<html><head/><body>');
         response.write('<strong>Hello World!</strong>');
+        response.write('<strong>');
+        response.write(process.env.TEST_ENV);
+        response.write('</strong>');
         response.write('</body></html>');
         response.end();
 })

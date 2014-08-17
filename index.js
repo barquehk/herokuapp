@@ -26,7 +26,7 @@ app.set('port', (process.env.PORT || 5000))
 app.use(express.static(__dirname + '/public'))
 
 app.get('/', function(req, response) {
-        request('http://www.yahoo.com').pipe(tr).pipe(response);
+        request('http://www.google.com').pipe(tr).pipe(response);
         /*
         console.log('this is a log from my app');
         response.write('<html><head/><body>');

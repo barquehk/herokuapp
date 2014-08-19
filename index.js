@@ -1,44 +1,65 @@
-var express = require('express');
-var request = require('request');
-var through = require('through');
+var express = require('express')
+  , everyauth = require('everyauth')
+  , conf = require('./conf')
+  , everyauthRoot = './';
+
+var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+
+everyauth.debug = true;
+
+var usersById = {};
+var nextUserId = 0;
+
+function addUser (source, sourceUser) {
+  var user;
+  if (arguments.length === 1) { // password-based
+    user = sourceUser = source;
+    user.id = ++nextUserId;
+    return usersById[nextUserId] = user;
+  } else { // non-password-based
+    user = usersById[++nextUserId] = {id: nextUserId};
+    user[source] = sourceUser;
+  }
+  return user;
+}
+
+var usersByFbId = {};
+
+everyauth.everymodule
+  .findUserById( function (id, callback) {
+    callback(null, usersById[id]);
+  });
+
+
+everyauth
+  .facebook
+    .appId(conf.fb.appId)
+    .appSecret(conf.fb.appSecret)
+    .findOrCreateUser( function (session, accessToken, accessTokenExtra, fbUserMetadata) {
+      return usersByFbId[fbUserMetadata.id] ||
+        (usersByFbId[fbUserMetadata.id] = addUser('facebook', fbUserMetadata));
+    })
+    .redirectPath('/');
+
+
 var app = express();
-var pg = require('pg');
-
-
-var tr = through(
-                function write(data){
-                  console.log('queuing num bytes: ' + data.length);
-                  this.queue(data);
-                },
-                function end(){
-                  this.queue(null);
-                });
-/*
-pg.connect(process.env.DATABASE_URL, function(err, client,done){
-    client.query('SELECT * FROM mytable', function(err, result){
-        done();
-        if(err) return console.error(err);
-        console.log(result.rows);
-    });
-});
-*/
-app.set('port', (process.env.PORT || 5000))
 app.use(express.static(__dirname + '/public'))
+  .use(bodyParser.json())
+  .use(cookieParser('htuayreve'))
+  .use(session())
+  .use(everyauth.middleware());
 
-app.get('/', function(req, response) {
-        request('http://www.google.com').pipe(tr).pipe(response);
-        /*
-        console.log('this is a log from my app');
-        response.write('<html><head/><body>');
-        response.write('<strong>Hello World!</strong>');
-        response.write('<strong>');
-        response.write(process.env.TEST_ENV);
-        response.write('</strong>');
-        response.write('</body></html>');
-        response.end();
-        */
-})
+app.set('view engine', 'jade');
+app.set('views', everyauthRoot + 'views');
 
-app.listen(app.get('port'), function() {
-  console.log("Node app is running at localhost:" + app.get('port'))
-})
+app.get('/', function (req, res) {
+  res.render('home');
+});
+
+app.listen(3000);
+
+console.log('Go to http://local.host:3000');
+
+module.exports = app;

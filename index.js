@@ -58,8 +58,8 @@ app.get('/', function (req, res) {
   res.render('home');
 });
 
-app.listen(3000);
+app.listen((process.env.PORT || 5000));
 
-console.log('Go to http://local.host:3000');
+console.log('Go to http://local.host:' + (process.env.PORT || 5000));
 
 module.exports = app;

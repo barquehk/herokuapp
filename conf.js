@@ -1,7 +1,7 @@
 module.exports = {
     fb: {
-        appId: '111565172259433'
-      , appSecret: '85f7e0a0cc804886180b887c1f04a3c1'
+        appId: '270483899825812'
+      , appSecret: '0ae2ab0c5cab9328d8ea08f2d6eced1e'
     }
   , twit: {
         consumerKey: 'JLCGyLzuOK1BjnKPKGyQ'

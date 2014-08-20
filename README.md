@@ -17,5 +17,6 @@ Your app should now be running on [localhost:5000](http://localhost:5000/).
 
 ##Features
 1. Facebook oauth login
-2. Facebook Graph API [pending]
+2. User everyauth underground branch 0.5.x
+3. Facebook Graph API [pending]
 

@@ -33,23 +33,30 @@ everyauth.everymodule
   });
 
 
+everyauth.use(require("everyauth-facebook"));
+
 everyauth
   .facebook
     .appId(conf.fb.appId)
     .appSecret(conf.fb.appSecret)
+    .callbackPath('/auth/facebook/callback')
     .findOrCreateUser( function (session, accessToken, accessTokenExtra, fbUserMetadata) {
       return usersByFbId[fbUserMetadata.id] ||
         (usersByFbId[fbUserMetadata.id] = addUser('facebook', fbUserMetadata));
-    })
-    .redirectPath('/');
+    });
 
 
 var app = express();
 app.use(express.static(__dirname + '/public'))
+  .use(bodyParser.urlencoded({extended: true}))
   .use(bodyParser.json())
   .use(cookieParser('htuayreve'))
-  .use(session())
-  .use(everyauth.middleware());
+  .use(session({
+          secret: 'htuayreve',
+          resave: true,
+          saveUninitialized: true}))
+  .use(everyauth.loadUser())
+  .use(everyauth.addRequestLocals('user'));
 
 app.set('view engine', 'jade');
 app.set('views', everyauthRoot + 'views');
@@ -57,6 +64,25 @@ app.set('views', everyauthRoot + 'views');
 app.get('/', function (req, res) {
   res.render('home');
 });
+
+app.get('/auth/facebook',
+                everyauth.facebook.middleware('entryPath'),
+                function(err, req, res, next) {
+                  res.render('auth-fail.jade', {
+                    error: err.toString()
+                  });
+                });
+app.get('/auth/facebook/callback',
+                everyauth.facebook.middleware('callbackPath'),
+                function(req, res, next){
+                  res.redirect('/');
+                },
+                function(err, req, res, next){
+                  console.log(err.stack);
+                  res.render('auth-fail.jade', {
+                    error: err.toString()
+                  });
+                });
 
 app.listen((process.env.PORT || 5000));
 

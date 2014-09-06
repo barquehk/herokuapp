@@ -18,6 +18,7 @@
     "oauth2": "git://github.com/everyauth/oauth2.git",
     "pg": "^3.4.1",
     "request": "^2.40.0",
+    "serve-index": "^1.2.0",
     "through": "^2.3.4"
   },
   "engines": {

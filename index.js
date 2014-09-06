@@ -1,7 +1,8 @@
 var express = require('express')
   , everyauth = require('everyauth')
   , conf = require('./conf')
-  , everyauthRoot = './';
+  , everyauthRoot = './'
+  , serveIndex = require('serve-index');
 
 // this is for testing the support of jsdom in heroku
 var jsdom = require('jsdom');
@@ -66,7 +67,8 @@ app.use(express.static( './public'))
           resave: true,
           saveUninitialized: true}))
   .use(everyauth.loadUser())
-  .use(everyauth.addRequestLocals('user'));
+  .use(everyauth.addRequestLocals('user'))
+  .use('/jqplot', serveIndex('public/jqplot',{'icons':true}));
 
 app.set('view engine', 'jade');
 app.set('views', everyauthRoot + 'views');

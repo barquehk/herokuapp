@@ -68,7 +68,8 @@ app.use(express.static( './public'))
           saveUninitialized: true}))
   .use(everyauth.loadUser())
   .use(everyauth.addRequestLocals('user'))
-  .use('/jqplot', serveIndex('public/jqplot',{'icons':true}));
+  .use('/jqplot', serveIndex('public/jqplot',{'icons':true}))
+  .use('/userscript', serveIndex('public/userscript',{'icons':true}));
 
 app.set('view engine', 'jade');
 app.set('views', everyauthRoot + 'views');

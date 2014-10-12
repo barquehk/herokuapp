@@ -1,8 +1,12 @@
+// This is the entry of herokuapp
+
 var express = require('express')
   , everyauth = require('everyauth')
   , conf = require('./conf')
   , everyauthRoot = './'
   , serveIndex = require('serve-index');
+
+
 
 // this is for testing the support of jsdom in heroku
 var jsdom = require('jsdom');
